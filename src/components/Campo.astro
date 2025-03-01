@@ -1,0 +1,33 @@
+---
+export interface Props {
+    forp: string;
+    label: string;
+    type: string;
+    id: string;
+    name: string;
+    placeholder: string;
+    required: boolean;
+}
+
+const { forp, label, type, id, name, placeholder, required } = Astro.props;
+---
+
+<div class="nice-form-group">
+    <label for={forp}>{label}</label>
+    <input
+        type={type}
+        id={id}
+        name={name}
+        placeholder={placeholder}
+        required={required}
+        class="nice-form-group"
+    />
+</div>
+
+<style>
+    @reference "../styles/global.css";
+
+    label {
+        @apply text-[1.125rem] font-medium mb-2;
+    }
+</style>
