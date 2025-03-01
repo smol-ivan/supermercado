@@ -1,0 +1,57 @@
+---
+import Boton from "../Botones/OpcionMenu.astro";
+---
+
+<div class="container-menu-principal">
+    <div class="menu-titulo">
+        <p>Menu Principal <br /> <strong>Supermercado</strong></p>
+    </div>
+    <div class="menu-opcion menu-opcion-producto">
+        <Boton href="/producto" label="PRODUCTOS" />
+    </div>
+    <div class="menu-opcion menu-opcion-departamentos">
+        <Boton href="/departamentos" label="DEPARTAMENTOS" />
+    </div>
+    <div class="menu-opcion menu-opcion-asignacion-producto">
+        <Boton href="/asignacion-productos" label="ASIGNACION PRODUCTOS" />
+    </div>
+    <div class="menu-opcion menu-opcion-precios">
+        <Boton href="/precios" label="PRECIOS" />
+    </div>
+</div>
+
+<style>
+    @reference "../../styles/global.css";
+
+    p {
+        @apply text-3xl;
+    }
+
+    .container-menu-principal {
+        @apply grid grid-cols-4 grid-rows-5 justify-items-center items-center h-screen;
+    }
+
+    .menu-opcion {
+        @apply flex justify-center items-center w-[30vw] h-[30vh];
+    }
+
+    .menu-opcion-producto {
+        grid-area: 2 / 1 / 4 / 3;
+    }
+
+    .menu-opcion-departamentos {
+        grid-area: 2 / 3 / 4 / 5;
+    }
+
+    .menu-opcion-asignacion-producto {
+        grid-area: 4 / 1 / 6 / 3;
+    }
+
+    .menu-opcion-precios {
+        grid-area: 4 / 3 / 6 / 5;
+    }
+    .menu-titulo {
+        grid-area: 1 / 1 / 2 / 5;
+        text-align: center;
+    }
+</style>

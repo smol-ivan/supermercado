@@ -1,0 +1,57 @@
+---
+import Boton from "../Botones/OpcionMenu.astro";
+---
+
+<div class="container-menu-principal">
+    <div class="menu-titulo">
+        <p>Menu<br /><strong>Productos</strong></p>
+    </div>
+    <div class="menu-opcion menu-opcion-atras">
+        <Boton href="/" label="REGRESAR" atras={true} />
+    </div>
+    <div class="menu-opcion menu-opcion-alta">
+        <Boton href="/producto/alta" label="ALTA" />
+    </div>
+    <div class="menu-opcion menu-opcion-baja">
+        <Boton href="/producto/baja" label="BAJA " />
+    </div>
+    <div class="menu-opcion menu-opcion-consulta">
+        <Boton href="/producto/consulta" label="CONSULTA" />
+    </div>
+</div>
+
+<style>
+    @reference "../../styles/global.css";
+
+    p {
+        @apply text-3xl;
+    }
+
+    .container-menu-principal {
+        @apply grid grid-cols-4 grid-rows-5 justify-items-center items-center h-screen;
+    }
+
+    .menu-opcion {
+        @apply flex justify-center items-center w-[30vw] h-[30vh];
+    }
+
+    .menu-opcion-atras {
+        grid-area: 2 / 1 / 4 / 3;
+    }
+
+    .menu-opcion-alta {
+        grid-area: 2 / 3 / 4 / 5;
+    }
+
+    .menu-opcion-baja {
+        grid-area: 4 / 1 / 6 / 3;
+    }
+
+    .menu-opcion-consulta {
+        grid-area: 4 / 3 / 6 / 5;
+    }
+    .menu-titulo {
+        grid-area: 1 / 1 / 2 / 5;
+        text-align: center;
+    }
+</style>

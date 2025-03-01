@@ -1,0 +1,39 @@
+---
+export interface Props {
+    href: string;
+    label: string;
+    atras?: boolean;
+}
+
+const { href, label, atras } = Astro.props;
+---
+
+<a href={href} class=`boton ${atras ? 'boton-atras' : ''}`>{label}</a>
+
+<style>
+    @reference "../../styles/global.css";
+
+    .boton {
+        @apply w-full h-full text-3xl  bg-gray-200 flex justify-center items-center border border-black rounded-lg cursor-pointer p-10;
+    }
+
+    .boton:hover {
+        @apply bg-gray-300;
+    }
+
+    .boton:active {
+        @apply bg-gray-400;
+    }
+
+    .boton-atras {
+        @apply border-red-500 bg-red-200;
+    }
+
+    .boton-atras:hover {
+        @apply bg-red-300;
+    }
+
+    .boton-atras:active {
+        @apply bg-red-400;
+    }
+</style>
