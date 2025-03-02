@@ -4,11 +4,12 @@ import "../../styles/forms.css";
 import Button from "../../components/Botones/TinyBoton.astro";
 import Campo from "../../components/Campo.astro";
 import FormHeader from "../../components/FormHeader.astro";
+//action="/api/productos/alta" method="post"
 ---
 
 <Layout>
     <FormHeader title="Alta de Producto" returnHref="/productos/" />
-    <form action="/productos/alta" method="post" class="general-form">
+    <form id="productForm" class="general-form">
         <p class="font-bold text-2xl text-center">
             Formulario <br />alta de producto
         </p>
@@ -39,4 +40,25 @@ import FormHeader from "../../components/FormHeader.astro";
             <Button label="Limpiar" isReset />
         </div>
     </form>
+
+    <script>
+        document
+            .getElementById("productForm")
+            .addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const response = await fetch("/api/productos/alta", {
+                    method: "POST",
+                    body: formData,
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`${data.message}`);
+                    form.reset();
+                } else {
+                    alert("Error al guardar el producto");
+                }
+            });
+    </script>
 </Layout>
