@@ -9,6 +9,7 @@ export interface Props {
     isHidden?: boolean;
     isOk?: boolean;
     isCancel?: boolean;
+    href?: string;
 }
 
 const {
@@ -21,11 +22,12 @@ const {
     isOk,
     isCancel,
     onClick,
+    href,
 } = Astro.props;
 
 const handleClick = () => {
     if (isDisabled) return;
-    onClick();
+    if (onClick) onClick();
 };
 
 const buttonClass = isSubmit
@@ -43,27 +45,32 @@ const buttonClass = isSubmit
 const buttonType = isSubmit ? "submit" : isReset ? "reset" : "button";
 ---
 
-<button
-    class=`boton ${buttonClass}`
-    disabled={isDisabled}
-    hidden={isHidden}
-    type={buttonType}
->
-    {label}
-</button>
+{
+    href ? (
+        <a class={`boton ${buttonClass}`} href={href} hidden={isHidden}>
+            {label}
+        </a>
+    ) : (
+        <button
+            class={`boton ${buttonClass}`}
+            disabled={isDisabled}
+            hidden={isHidden}
+            type={buttonType}
+            onClick={handleClick}
+        >
+            {label}
+        </button>
+    )
+}
 
 <style>
     @reference "../../styles/global.css";
 
     .boton {
-        @apply text-white font-bold px-[1.5rem] py-[0.5rem] rounded-md cursor-pointer m-4 flex justify-center items-center;
+        @apply text-white font-bold px-[1.5rem] py-[0.5rem] rounded-md cursor-pointer flex justify-center items-center;
     }
 
-    /* button {
-        @apply w-full h-full text-3xl  bg-gray-200 flex justify-center items-center border border-black rounded-lg cursor-pointer p-10;
-    } */
-
-    button:active {
+    .boton:active {
         @apply scale-90 transition-transform;
     }
 
@@ -73,5 +80,9 @@ const buttonType = isSubmit ? "submit" : isReset ? "reset" : "button";
 
     .boton-reset {
         @apply bg-red-300 hover:bg-red-400 active:bg-red-500;
+    }
+
+    .boton-return {
+        @apply bg-blue-300 hover:bg-blue-400 active:bg-blue-500;
     }
 </style>

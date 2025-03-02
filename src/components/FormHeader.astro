@@ -1,0 +1,16 @@
+---
+import TinyBoton from "./Botones/TinyBoton.astro";
+
+export interface Props {
+    title: string;
+    returnHref: string;
+}
+
+const { title, returnHref } = Astro.props;
+---
+
+<div class="flex row justify-between align-baseline mt-10 mb-12 mx-20">
+    <TinyBoton label="regresar" isReturn href=`${returnHref}` />
+    <h1 class="text-4xl font-bold">{title}</h1>
+    <TinyBoton label="regresar" isDisabled />
+</div>
