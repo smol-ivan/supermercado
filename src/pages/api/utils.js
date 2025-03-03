@@ -21,5 +21,7 @@ export const writeJSON = async (path, data) => {
 }
 
 export const generateID = (array) => {
-    return array.length > 0 ? array.length + 1 : 1
+    if (array.length === 0) return 1
+    const lastElement = array[array.length - 1]
+    return lastElement.id + 1
 }
