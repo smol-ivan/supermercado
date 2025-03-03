@@ -30,10 +30,11 @@ import "../../styles/global.css";
             tbody.innerHTML = ""; // Limpiar el contenido existente
             data.forEach((producto) => {
                 const row = document.createElement("tr");
+                const classes = "border text-[1rem] text-center px-3 py-1";
                 row.innerHTML = `
-                    <td class="border text-lg">${producto.id}</td>
-                    <td class="border text-lg">${producto.nombre}</td>
-                    <td class="border text-lg">${producto.proveedor}</td>
+                    <td class="${classes}">${producto.id}</td>
+                    <td class="${classes}">${producto.nombre}</td>
+                    <td class="${classes}">${producto.proveedor}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -44,7 +45,7 @@ import "../../styles/global.css";
     <style>
         @reference "../../styles/global.css";
         table {
-            @apply w-1/3 table-auto mx-auto;
+            @apply w-1/2 table-auto mx-auto;
         }
         th {
             @apply bg-gray-300 px-6 py-3  text-2xl;
