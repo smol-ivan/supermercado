@@ -21,11 +21,16 @@ import "../../styles/global.css";
     <script>
         async function fetchProductos() {
             const response = await fetch("/api/productos/consulta");
-            const data = await response.json();
-            if (data.message) {
+            if (!response.ok) {
+                const data = await response.json();
                 alert(data.message);
                 return;
             }
+            const data = await response.json();
+            // if (data.message) {
+            //     alert(data.message);
+            //     return;
+            // }
             const tbody = document.getElementById("productTableBody");
             tbody.innerHTML = ""; // Limpiar el contenido existente
             data.forEach((producto) => {
