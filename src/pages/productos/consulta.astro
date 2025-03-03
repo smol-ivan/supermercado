@@ -5,17 +5,17 @@ import "../../styles/global.css";
 ---
 
 <Layout>
-    <FormHeader title="Consulta de Producto" returnHref="/productos/" />
+    <FormHeader title="Consulta de Productos" returnHref="/productos/" />
     <table>
         <thead>
             <tr>
-                <th>Clave</th>
+                <th class="rounded-tl-2xl">Clave</th>
                 <th>Nombre</th>
-                <th>Proveedor</th>
+                <th class="rounded-tr-2xl">Proveedor</th>
             </tr>
         </thead>
         <tbody id="productTableBody">
-            <!-- Los productos se insertarán aquí dinámicamente -->
+            <!-- Si hay productos, aparecen despues del fetch -->
         </tbody>
     </table>
     <script>
@@ -48,7 +48,7 @@ import "../../styles/global.css";
             @apply w-1/2 table-auto mx-auto;
         }
         th {
-            @apply bg-gray-300 px-6 py-3  text-2xl;
+            @apply bg-amber-200 px-6 py-3  text-2xl;
         }
     </style>
 </Layout>
