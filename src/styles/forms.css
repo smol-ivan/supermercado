@@ -6,8 +6,8 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    gap: 3.25rem; /* 16 * 0.25rem = 4rem */
+    gap: 2.25rem; 
     background-color: #fdefb8;
-    padding: 2.5rem; /* 10 * 0.25rem = 2.5rem */
-    border-radius: 1rem; /* 2xl = 1rem */
+    padding: 2.5rem;
+    border-radius: 1rem; 
 }
