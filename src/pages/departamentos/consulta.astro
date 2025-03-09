@@ -1,0 +1,56 @@
+---
+import FormHeader from "../../components/FormHeader.astro";
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/global.css";
+---
+
+<Layout>
+    <FormHeader
+        title="Consulta de Departamentos"
+        returnHref="/departamentos/"
+    />
+    <table>
+        <thead>
+            <tr>
+                <th class="rounded-tl-2xl">Clave</th>
+                <th>Nombre</th>
+                <th class="rounded-tr-2xl">Responsable</th>
+            </tr>
+        </thead>
+        <tbody id="departamentosTableBody"> </tbody>
+    </table>
+    <script>
+        async function fetchDeparmantentos() {
+            const response = await fetch("/api/departamentos/consulta");
+            if (!response.ok) {
+                const data = await response.json();
+                alert(data.message);
+                return;
+            }
+            const data = await response.json();
+            const tbody = document.getElementById("departamentosTableBody");
+            tbody.innerHTML = "";
+            data.forEach((departamento) => {
+                const row = document.createElement("tr");
+                const classes = "border text-[1rem] text-center px-3 py-1";
+                row.innerHTML = `
+                    <td class="${classes}">${departamento.clave}</td>
+                    <td class="${classes}">${departamento.nombre}</td>
+                    <td class="${classes}">${departamento.responsable}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        fetchDeparmantentos();
+    </script>
+</Layout>
+
+<style>
+    @reference "../../styles/global.css";
+    table {
+        @apply w-1/2 table-auto mx-auto;
+    }
+    th {
+        @apply bg-amber-200 px-6 py-3  text-2xl;
+    }
+</style>

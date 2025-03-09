@@ -49,3 +49,16 @@ export const createFile = async (filePath) => {
         throw error
     }
 }
+
+export const readLinesFromFile = async (filePath) => {
+    const file = path.join("data", filePath)
+    try {
+        const data = await fs.readFile(file, "utf-8")
+        return data.split("\n").filter(line => line.length > 0)
+    } catch (error) {
+        if (error.code === "ENOENT") {
+            return []
+        } 
+        throw error
+    }
+}
