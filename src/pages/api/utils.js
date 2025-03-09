@@ -25,3 +25,27 @@ export const generateID = (array) => {
     const lastElement = array[array.length - 1]
     return lastElement.id + 1
 }
+
+export const appendLineToFile = async (filePath, line) => {
+    const file = path.join("data", filePath)
+    try {
+        await fs.appendFile(file, line + "\n", "utf-8")
+    } catch (error) {
+        if (error.code === "ENOENT") {
+            await fs.mkdir(path.dirname(file), { recursive: true })
+            await fs.writeFile(file, line + "\n", "utf-8")
+        } else {
+            throw error
+        }
+    }
+}
+
+export const createFile = async (filePath) => {
+    const file = path.join("data", filePath)
+    try {
+        await fs.mkdir(path.dirname(file), { recursive: true })
+        await fs.writeFile(file, "", "utf-8")
+    } catch (error) {
+        throw error
+    }
+}

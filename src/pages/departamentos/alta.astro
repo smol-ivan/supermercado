@@ -1,0 +1,72 @@
+---
+import FormHeader from "../../components/FormHeader.astro";
+import Layout from "../../layouts/Layout.astro";
+import Campo from "../../components/Campo.astro";
+import Button from "../../components/Botones/TinyBoton.astro";
+import "../../styles/forms.css";
+---
+
+<Layout>
+    <FormHeader title="Alta de Departamento" returnHref="/departamentos" />
+    <form id="productoForm" class="general-form">
+        <p class="font-bold text-2xl text-center">
+            Formulario <br />alta de departamento
+        </p>
+        <fieldset>
+            <legend>Información del departamento</legend>
+            <Campo
+                forp="clave"
+                label="Clave:"
+                type="text"
+                placeholder="Clave del departamento"
+                id="clave"
+                name="clave"
+                required
+            />
+            <Campo
+                forp="nombre"
+                label="Nombre:"
+                type="text"
+                placeholder="Nombre del departamento"
+                id="nombre"
+                name="nombre"
+                required
+            />
+
+            <Campo
+                forp="responsable"
+                label="Responsable:"
+                type="text"
+                id="responsable"
+                name="responsable"
+                placeholder="Responsable del departamento"
+                required
+            />
+        </fieldset>
+        <div class="flex justify-around">
+            <Button label="Guardar" isSubmit />
+            <Button label="Limpiar" isReset />
+        </div>
+    </form>
+
+    <script>
+        document
+            .getElementById("productoForm")
+            .addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const response = await fetch("/api/departamentos/alta", {
+                    method: "POST",
+                    body: formData,
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`${data.message}`);
+                    form.reset();
+                } else {
+                    alert("Error al guardar el producto");
+                }
+            });
+    </script>
+</Layout>
