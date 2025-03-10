@@ -78,3 +78,23 @@ export const existProduct = async (claveProducto) => {
     const foundProducts = productos.filter(producto => producto.clave === claveProducto)
     return foundProducts.length > 0 ? foundProducts : -1
 }
+
+export const deleteFile = async (filePath) => {
+    const file = path.join("data", filePath)
+    try {
+        await fs.unlink(file)
+    } catch (error) {
+        if (error.code !== "ENOENT") {
+            return -1
+        }
+    }
+}
+
+export const writeLinesToFile = async (filePath, lines) => {
+    const file = path.join("data", filePath)
+    try {
+        await fs.writeFile(file, lines.join("\n") + "\n", "utf-8")
+    } catch (error) {
+        throw error
+    }
+}

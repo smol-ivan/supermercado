@@ -1,0 +1,53 @@
+---
+import TinyBoton from "../../components/Botones/TinyBoton.astro";
+import Campo from "../../components/Campo.astro";
+import FormHeader from "../../components/FormHeader.astro";
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/forms.css";
+---
+
+<Layout>
+    <FormHeader title="Baja de Departamento" returnHref="/departamentos" />
+    <form class="general-form" id="departamentForm">
+        <p class="font-bold text-2xl text-center">
+            Formulario <br /> baja de departamento
+        </p>
+        <fieldset>
+            <legend>Ingrese la clave del departamento</legend>
+            <Campo
+                forp="clave"
+                label="clave"
+                type="text"
+                id="clave"
+                name="clave"
+                placeholder="Clave del producto"
+                required
+            />
+        </fieldset>
+        <div class="flex justify-around">
+            <TinyBoton label="Eliminar" isSubmit />
+            <TinyBoton label="Limpiar" isReset />
+        </div>
+    </form>
+    <script>
+        document
+            .getElementById("departamentForm")
+            .addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const response = await fetch("/api/departamentos/baja", {
+                    method: "POST",
+                    body: formData,
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(data.message);
+                    form.reset();
+                } else {
+                    const data = await response.json();
+                    alert(data.message);
+                }
+            });
+    </script>
+</Layout>
