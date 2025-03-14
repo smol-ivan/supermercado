@@ -1,0 +1,66 @@
+---
+import FormHeader from "../../components/FormHeader.astro";
+import Layout from "../../layouts/Layout.astro";
+import Campo from "../../components/Campo.astro";
+import Button from "../../components/Botones/TinyBoton.astro";
+import "../../styles/forms.css";
+---
+
+<Layout>
+    <FormHeader
+        title="Alta de producto en depto"
+        returnHref="/asignacion-productos"
+    />
+    <form id="productoForm" class="general-form">
+        <p class="font-bold text-2xl text-center">
+            Formulario <br />asignacion de producto
+        </p>
+        <fieldset>
+            <legend>Información del procedimeinto alta</legend>
+            <Campo
+                forp="claveProducto"
+                label="Clave del producto:"
+                type="text"
+                placeholder="Clave del producto"
+                id="claveProducto"
+                name="claveProducto"
+                required
+            />
+            <Campo
+                forp="claveDepartamento"
+                label="Clave del departamento:"
+                type="text"
+                placeholder="Clave del departamento"
+                id="claveDepartamento"
+                name="claveDepartamento"
+                required
+            />
+        </fieldset>
+        <div class="flex justify-around">
+            <Button label="Guardar" isSubmit />
+            <Button label="Limpiar" isReset />
+        </div>
+    </form>
+
+    <script>
+        document
+            .getElementById("productoForm")
+            .addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const response = await fetch("/api/asignacion-productos/alta", {
+                    method: "POST",
+                    body: formData,
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`${data.message}`);
+                    form.reset();
+                } else {
+                    const data = await response.json();
+                    alert(`${data.message}`);
+                }
+            });
+    </script>
+</Layout>

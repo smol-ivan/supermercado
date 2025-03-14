@@ -58,7 +58,23 @@ export const readLinesFromFile = async (filePath) => {
     } catch (error) {
         if (error.code === "ENOENT") {
             return []
-        } 
+        }
         throw error
     }
+}
+
+export const fileExists = async (filePath) => {
+    try {
+        await fs.access(filePath)
+        return true
+    }
+    catch (error) {
+        return false
+    }
+}
+
+export const existProduct = async (claveProducto) => {
+    const productos = await readJSON("productos.json")
+    const foundProducts = productos.filter(producto => producto.clave === claveProducto)
+    return foundProducts.length > 0 ? foundProducts : -1
 }

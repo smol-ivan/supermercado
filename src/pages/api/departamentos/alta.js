@@ -18,7 +18,7 @@ export const POST = async ({ request }) => {
 
     // departamentos.push()
     appendLineToFile(path, renglon)
-    createFile(`${departamento.clave}Productos${departamento.nombre}.txt`)
+    createFile(`${departamento.clave}ProductosDepto.txt`)
 
     return new Response(JSON.stringify({
         message: `Departamento ${departamento.nombre} creado con exito`

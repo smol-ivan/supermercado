@@ -1,0 +1,22 @@
+[
+  {
+    "nombre": "Frijol",
+    "proveedor": "Elena Perez",
+    "id": 2
+  },
+  {
+    "nombre": "Cinta de asilar",
+    "proveedor": "Jose Aguilar",
+    "id": 3
+  },
+  {
+    "nombre": "Cobija",
+    "proveedor": "Juan Sanchez",
+    "id": 4
+  },
+  {
+    "nombre": "asd",
+    "proveedor": "asd",
+    "id": 5
+  }
+]
