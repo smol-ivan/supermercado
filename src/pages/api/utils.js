@@ -64,18 +64,20 @@ export const readLinesFromFile = async (filePath) => {
 }
 
 export const fileExists = async (filePath) => {
+    const file = path.join("data", filePath)
     try {
-        await fs.access(filePath)
-        return true
+        console.log("El departamento existe")
+        await fs.access(file)
     }
     catch (error) {
         return false
     }
+    return true
 }
 
 export const existProduct = async (claveProducto) => {
     const productos = await readJSON("productos.json")
-    const foundProducts = productos.filter(producto => producto.clave === claveProducto)
+    const foundProducts = productos.filter(producto => producto.id === claveProducto)
     return foundProducts.length > 0 ? foundProducts : -1
 }
 

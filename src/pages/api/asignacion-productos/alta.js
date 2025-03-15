@@ -12,7 +12,7 @@ export const POST = async ({ request }) => {
     const departamentoPath = `${form.claveDepartamento}ProductosDepto.txt`;
 
     //Verificar que el departamento exista 
-    if (!fileExists(departamentoPath)) {
+    if (!await fileExists(departamentoPath)) {
         return new Response(JSON.stringify({
             message: `No hay departamento con clave proporcionada\n ${form.claveDepartamento}`
         }),
