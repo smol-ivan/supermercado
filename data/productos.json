@@ -1,11 +1,16 @@
 [
   {
+    "nombre": "Arroz",
+    "proveedor": "Mario Garcia",
+    "id": 1
+  },
+  {
     "nombre": "Frijol",
     "proveedor": "Elena Perez",
     "id": 2
   },
   {
-    "nombre": "Cinta de asilar",
+    "nombre": "Cintamos de aislar",
     "proveedor": "Jose Aguilar",
     "id": 3
   },
@@ -15,8 +20,8 @@
     "id": 4
   },
   {
-    "nombre": "asd",
-    "proveedor": "asd",
+    "nombre": "foco de 40 Watts",
+    "proveedor": "Silvia Lopez",
     "id": 5
   }
 ]
