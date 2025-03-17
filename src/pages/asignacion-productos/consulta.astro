@@ -1,0 +1,106 @@
+---
+import FormHeader from "../../components/FormHeader.astro";
+import Layout from "../../layouts/Layout.astro";
+import Campo from "../../components/Campo.astro";
+import Button from "../../components/Botones/TinyBoton.astro";
+import "../../styles/forms.css";
+---
+
+<Layout>
+    <FormHeader
+        title="Consultar productos de un Departamento"
+        returnHref="/asignacion-productos"
+    />
+    <form id="productoForm" class="general-form">
+        <p class="font-bold text-2xl text-center">
+            Formulario <br />consulta de productos en departamento
+        </p>
+        <fieldset>
+            <Campo
+                forp="claveDepartamento"
+                label="Clave del departamento:"
+                type="text"
+                placeholder="Clave del departamento"
+                id="claveDepartamento"
+                name="claveDepartamento"
+                required
+            />
+        </fieldset>
+        <div class="flex justify-around">
+            <Button label="Guardar" isSubmit />
+            <Button label="Limpiar" isReset />
+        </div>
+    </form>
+    <div id="tablaContainer" class="mt-8 hidden">
+        <table>
+            <thead>
+                <tr>
+                    <th class="rounded-tl-2xl">Clave</th>
+                    <th class="rounded-tr-2xl">Producto</th>
+                </tr>
+            </thead>
+            <tbody id="priceTableBody">
+                <!-- Los datos de precios aparecerán aquí después del fetch -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document
+            .getElementById("productoForm")
+            .addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const response = await fetch(
+                    "/api/asignacion-productos/consulta",
+                    {
+                        method: "POST",
+                        body: formData,
+                    },
+                );
+
+                const tablaContainer =
+                    document.getElementById("tablaContainer");
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Si la respuesta contiene datos, mostrar la tabla
+                    if (data.length > 0) {
+                        const tbody = document.getElementById("priceTableBody");
+                        data.forEach((item) => {
+                            const row = document.createElement("tr");
+                            const classes =
+                                "border text-[1rem] text-center px-3 py-1";
+                            row.innerHTML = `
+                            <td class="${classes}">${item.clave}</td>
+                            <td class="${classes}">${item.nombre}</td>
+                                `;
+                            tbody?.appendChild(row);
+                        });
+                        tablaContainer?.classList.remove("hidden");
+                    } else {
+                        tablaContainer.classList.add("hidden");
+                        alert(
+                            "No se encontraron productos en este departamento",
+                        );
+                    }
+                } else {
+                    const data = await response.json();
+                    alert(`${data.message}`);
+                    tablaContainer.classList.add("hidden");
+                }
+            });
+    </script>
+</Layout>
+
+<style>
+    @reference "../../styles/global.css";
+    table {
+        @apply w-1/3 table-auto mx-auto mt-4;
+    }
+    th {
+        @apply bg-amber-200 px-6 py-3 text-2xl;
+    }
+</style>

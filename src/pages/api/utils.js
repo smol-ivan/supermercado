@@ -57,7 +57,7 @@ export const readLinesFromFile = async (filePath) => {
         return data.split("\n").filter(line => line.length > 0)
     } catch (error) {
         if (error.code === "ENOENT") {
-            return []
+            return -1
         }
         throw error
     }
