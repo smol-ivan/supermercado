@@ -55,25 +55,4 @@ const message = urlParams.get("message");
             <TinyBoton label="Limpiar" isReset />
         </div>
     </form>
-    <!-- <script>
-        document
-            .getElementById("productForm")
-            .addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                const response = await fetch("/api/productos/baja", {
-                    method: "POST",
-                    body: formData,
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    alert(data.message);
-                    form.reset();
-                } else {
-                    const data = await response.json();
-                    alert(data.message);
-                }
-            });
-    </script> -->
 </Layout>
