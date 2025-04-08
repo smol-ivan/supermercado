@@ -1,7 +1,7 @@
 import { db, eq, Product } from 'astro:db'
 import { z } from 'astro:content'
 
-const productSchema = z.object({
+const productAddSchema = z.object({
   nombre: z.string().min(1, 'El nombre es requerido'),
   proveedor: z.string().min(1, 'El proveedor es requerido')
 })
@@ -12,9 +12,11 @@ export const POST = async ({ request, redirect }) => {
   const body = Object.fromEntries(new URLSearchParams(bodyText))
 
   // Validar los campos del formulario
-  const result = productSchema.safeParse(body)
+  const result = productAddSchema.safeParse(body)
   if (!result.success) {
-    return redirect('/productos/alta?error=true&message=Campo%20invalido')
+    // Obtener el primer mensaje de error de Zod
+    const errorMessage = result.error.errors[0]?.message || 'Error de validación'
+    return redirect(`/productos/alta?error=true&message=${encodeURIComponent(errorMessage)}`)
   }
   const { nombre, proveedor } = result.data
 
