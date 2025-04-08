@@ -14,9 +14,7 @@ export const POST = async ({ request, redirect }) => {
   // Validar los campos del formulario
   const result = productAddSchema.safeParse(body)
   if (!result.success) {
-    // Obtener el primer mensaje de error de Zod
-    const errorMessage = result.error.errors[0]?.message || 'Error de validación'
-    return redirect(`/productos/alta?error=true&message=${encodeURIComponent(errorMessage)}`)
+    return redirect('/productos/alta?error=true&message=Campo%20invalido')
   }
   const { nombre, proveedor } = result.data
 
