@@ -1,32 +1,46 @@
-import { readJSON, writeJSON, generateID } from "../utils"
+import { db, eq, Product } from 'astro:db'
+import { z } from 'astro:content'
 
-const path = "productos.json"
+const productSchema = z.object({
+  nombre: z.string().min(1, 'El nombre es requerido'),
+  proveedor: z.string().min(1, 'El proveedor es requerido')
+})
 
-export const POST = async ({ request }) => {
-    const productos = await readJSON(path)
-    const formData = await request.formData()
+export const POST = async ({ request, redirect }) => {
+  // Obtenemos los campos del formulario
+  const bodyText = await request.text()
+  const body = Object.fromEntries(new URLSearchParams(bodyText))
 
-    // Convertir el FormData a un objeto
-    const producto = {}
-    formData.forEach((value, key) => {
-        producto[key] = value
-    })
+  // Validar los campos del formulario
+  const result = productSchema.safeParse(body)
+  if (!result.success) {
+    return redirect('/productos/alta?error=true&message=Campo%20invalido')
+  }
+  const { nombre, proveedor } = result.data
 
-    // Obtener el ID del producto
-    const id = generateID(productos)
-    console.log(productos)
+  // Validar que el producto no exista
+  const existingProduct = await db
+    .select()
+    .from(Product)
+    .where(eq(Product.nombre, nombre))
 
-    // Agregar el producto a la lista
-    productos.push({ ...producto, id: id })
+  if (existingProduct.length > 0) {
+    return redirect('/productos/alta?error=true&message=El%20producto%20ya%20existe')
+  }
 
-    // Guardar el array de productos
-    await writeJSON(path, productos)
+  // Obtener el ID del producto
+  const productos = await db.select().from(Product).orderBy(Product.clave)
+  console.log('productos:', productos)
+  const id = productos.length > 0 ? productos[productos.length - 1].clave + 1 : 1
 
+  const producto = {
+    clave: id,
+    nombre,
+    proveedor
+  }
 
-    return new Response(JSON.stringify({
-        message: `Producto dado de alta con la clave -> ${id}`,
-    }),
-        {
-            status: 200,
-        })
+  // Guardar el producto en la base de datos
+  await db.insert(Product).values(producto)
+
+  return redirect('/productos/alta?success=true&message=Producto%20guardado%20exitosamente')
 }
