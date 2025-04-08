@@ -4,11 +4,37 @@ import FormHeader from "../../components/FormHeader.astro";
 import Layout from "../../layouts/Layout.astro";
 import "../../styles/forms.css";
 import TinyBoton from "../../components/Botones/TinyBoton.astro";
+
+const urlParams = new URL(Astro.request.url).searchParams;
+const error = urlParams.get("error");
+const success = urlParams.get("success");
+const message = urlParams.get("message");
 ---
 
 <Layout>
     <FormHeader title="Baja de Producto" returnHref="/productos/" />
-    <form class="general-form" id="productForm">
+    <div class={`container ${error === "true" ? "error-active" : ""}`}>
+        {
+            error === "true" && (
+                <div class="error-message">
+                    <p>Error: {message}</p>
+                </div>
+            )
+        }
+        {
+            success === "true" && (
+                <div class="success-message">
+                    <p>Éxito: {message}</p>
+                </div>
+            )
+        }
+    </div>
+    <form
+        class="general-form"
+        id="productForm"
+        action="/api/productos/baja"
+        method="post"
+    >
         <p class="font-bold text-2xl text-center">
             Formulario <br />baja de producto
         </p>
@@ -17,7 +43,7 @@ import TinyBoton from "../../components/Botones/TinyBoton.astro";
             <Campo
                 forp="clave"
                 label="Clave:"
-                type="text"
+                type="number"
                 id="clave"
                 name="clave"
                 placeholder="Clave del producto"
@@ -29,7 +55,7 @@ import TinyBoton from "../../components/Botones/TinyBoton.astro";
             <TinyBoton label="Limpiar" isReset />
         </div>
     </form>
-    <script>
+    <!-- <script>
         document
             .getElementById("productForm")
             .addEventListener("submit", async (e) => {
@@ -49,5 +75,5 @@ import TinyBoton from "../../components/Botones/TinyBoton.astro";
                     alert(data.message);
                 }
             });
-    </script>
+    </script> -->
 </Layout>
