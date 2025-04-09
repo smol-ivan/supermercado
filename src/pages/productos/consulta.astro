@@ -2,6 +2,9 @@
 import FormHeader from "../../components/FormHeader.astro";
 import Layout from "../../layouts/Layout.astro";
 import "../../styles/global.css";
+import { db, Product } from "astro:db";
+
+const productos = await db.select().from(Product);
 ---
 
 <Layout>
@@ -15,40 +18,32 @@ import "../../styles/global.css";
             </tr>
         </thead>
         <tbody id="productTableBody">
-            <!-- Si hay productos, aparecen despues del fetch -->
+            {
+                productos.length > 0 ? (
+                    productos.map((producto) => (
+                        <tr>
+                            <td class="cell">{producto.clave}</td>
+                            <td class="cell">{producto.nombre}</td>
+                            <td class="cell">{producto.proveedor}</td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr>
+                        <td colspan="3" class="cell">
+                            No hay productos registrados
+                        </td>
+                    </tr>
+                )
+            }
         </tbody>
     </table>
-    <script>
-        async function fetchProductos() {
-            const response = await fetch("/api/productos/consulta");
-            if (!response.ok) {
-                const data = await response.json();
-                alert(data.message);
-                return;
-            }
-            const data = await response.json();
-            // if (data.message) {
-            //     alert(data.message);
-            //     return;
-            // }
-            const tbody = document.getElementById("productTableBody");
-            tbody.innerHTML = ""; // Limpiar el contenido existente
-            data.forEach((producto) => {
-                const row = document.createElement("tr");
-                const classes = "border text-[1rem] text-center px-3 py-1";
-                row.innerHTML = `
-                    <td class="${classes}">${producto.id}</td>
-                    <td class="${classes}">${producto.nombre}</td>
-                    <td class="${classes}">${producto.proveedor}</td>
-                `;
-                tbody.appendChild(row);
-            });
+    <style>
+        /* TODO: Pasar estilos de tabla a archivo general de estilos */
+        @reference "../../styles/global.css";
+        .cell {
+            @apply border text-[1rem] text-center px-3 py-1;
         }
 
-        fetchProductos();
-    </script>
-    <style>
-        @reference "../../styles/global.css";
         table {
             @apply w-1/2 table-auto mx-auto;
         }

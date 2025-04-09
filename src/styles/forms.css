@@ -1,4 +1,3 @@
-
 .general-form {
     margin-left: auto;
     margin-right: auto;
@@ -6,8 +5,37 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    gap: 2.25rem; 
+    gap: 0.8rem; 
     background-color: #fdefb8;
-    padding: 2.5rem;
+    padding: 2rem;
     border-radius: 1rem; 
+}
+
+.container {
+    width: 90%;
+    max-width: 400px;
+    margin: 10px auto;
+    position: relative;
+}
+
+.error-message {
+    background-color: #ff4c4c;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0px 0px 10px 0px rgba(99, 98, 98, 0.75);
+    margin-bottom: 45px;
+    margin-top: -30px;
+}
+
+.success-message {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0px 0px 10px 0px rgba(99, 98, 98, 0.75);
+    margin-bottom: 45px;
+    margin-top: -30px;
 }

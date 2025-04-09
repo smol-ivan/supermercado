@@ -4,12 +4,37 @@ import "../../styles/forms.css";
 import Button from "../../components/Botones/TinyBoton.astro";
 import Campo from "../../components/Campo.astro";
 import FormHeader from "../../components/FormHeader.astro";
-//action="/api/productos/alta" method="post"
+
+const urlParams = new URL(Astro.request.url).searchParams;
+const error = urlParams.get("error");
+const success = urlParams.get("success");
+const message = urlParams.get("message");
 ---
 
 <Layout>
     <FormHeader title="Alta de Producto" returnHref="/productos/" />
-    <form id="productForm" class="general-form">
+    <div class={`container ${error === "true" ? "error-active" : ""}`}>
+        {
+            error === "true" && (
+                <div class="error-message">
+                    <p>Error: {message}</p>
+                </div>
+            )
+        }
+        {
+            success === "true" && (
+                <div class="success-message">
+                    <p>Éxito: {message}</p>
+                </div>
+            )
+        }
+    </div>
+    <form
+        id="productForm"
+        class="general-form"
+        action="/api/productos/alta"
+        method="post"
+    >
         <p class="font-bold text-2xl text-center">
             Formulario <br />alta de producto
         </p>
@@ -26,7 +51,7 @@ import FormHeader from "../../components/FormHeader.astro";
             />
 
             <Campo
-                forp="proovedor"
+                forp="proveedor"
                 label="Proveedor:"
                 type="text"
                 id="proveedor"
@@ -40,25 +65,4 @@ import FormHeader from "../../components/FormHeader.astro";
             <Button label="Limpiar" isReset />
         </div>
     </form>
-
-    <script>
-        document
-            .getElementById("productForm")
-            .addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                const response = await fetch("/api/productos/alta", {
-                    method: "POST",
-                    body: formData,
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    alert(`${data.message}`);
-                    form.reset();
-                } else {
-                    alert("Error al guardar el producto");
-                }
-            });
-    </script>
 </Layout>

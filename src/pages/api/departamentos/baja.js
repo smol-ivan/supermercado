@@ -1,32 +1,34 @@
-import { deleteFile, readLinesFromFile, writeLinesToFile } from "../utils";
+import { db, eq, Product, ProductDepartment } from 'astro:db'
+import { z } from 'astro:content'
 
-export const POST = async ({request}) => {
-    const departamentos = await readLinesFromFile("deptos.txt")
-    const formData = await request.formData()
+const departamentoDeleteSchema = z.object({
+  clave: z.coerce.number().min(1, 'La clave es requerida')
+})
 
-    const clave = formData.get("clave")
+export const POST = async ({ request, redirect }) => {
+  const bodyText = await request.text()
+  const body = Object.fromEntries(new URLSearchParams(bodyText))
 
-    const departamentoIndex = departamentos.findIndex(line => line.split("|")[0] === clave)
+  const result = await departamentoDeleteSchema.safeParseAsync(body)
 
-    if (departamentoIndex === -1) {
-        return new Response(JSON.stringify({
-            message: `No se encontro el departamento con la clave ${clave}`
-        }),
-        {
-            status: 404
-        })
-    }
+  if (!result.success) {
+    const errorMessage = result.error.errors[0]?.message || 'Error de validación'
+    return redirect(`/productos/baja?error=true&message=${encodeURIComponent(errorMessage)}`)
+  }
+  const { clave } = result.data
 
-    const [departamentoEliminado] = departamentos.splice(departamentoIndex, 1)
+  // Validar que el departamento exista
+  const existingDepartment = await db.select().from(Product).where(eq(Product.clave, clave))
+  if (existingDepartment.length === 0) {
+    return redirect('/productos/baja?error=true&message=El%20departamento%20no%20existe')
+  }
 
-    await writeLinesToFile("deptos.txt", departamentos)
+  // Eliminar el departamento de la base de datos
+  // NOTE: Simular la cascada
+  await db.delete(ProductDepartment).where(eq(ProductDepartment.claveDepartamento, clave))
+  await db.delete(Product).where(eq(Product.clave, clave))
 
-    await deleteFile(`${clave}ProductosDepto.txt`)
+  console.log('Departamento eliminado:', clave)
 
-    return new Response(JSON.stringify({
-        message: `Departamento con clave ${clave} eliminado con exito`
-    }),
-    {
-        status: 200
-    })
+  return redirect('/departamentos/baja?success=true&message=Departamento%20eliminado%20exitosamente')
 }

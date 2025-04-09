@@ -1,63 +1,43 @@
-import { fileExists, existProduct, readLinesFromFile, writeLinesToFile } from "../utils";
-export const POST = async ({request}) => {
-    // Obtener los datos del formulario
-    const formData = await request.formData()
-    const form = {}
+import { db, eq, and, Product, ProductDepartment, Department } from 'astro:db'
+import { productDepartmentSchema } from '../asignacion-productos/alta'
 
-    formData.forEach((value, key) => {
-        form[key] = value
-    })
+export const POST = async ({ request, redirect }) => {
+  const bodyText = await request.text()
+  const body = Object.fromEntries(new URLSearchParams(bodyText))
 
-    const departamentoPath = `${form.claveDepartamento}ProductosDepto.txt`
+  const result = await productDepartmentSchema.safeParseAsync(body)
 
-    // Verificar que el departamento existe
-    if (!await fileExists(departamentoPath)) {
-        return new Response(JSON.stringify({
-            message: `No hay departamento con la clave proporcionada -> ${form.claveDepartamento}`
-        }),
-            {
-                status: 400
-            }
-        )
-    }
+  if (!result.success) {
+    const errorMessage = result.error.errors[0]?.message || 'Error de validación'
+    return redirect(`/asignacion-productos/baja?error=true&message=${encodeURIComponent(errorMessage)}`)
+  }
 
-    const departamentoFile = await readLinesFromFile(departamentoPath)
+  const { claveDepartamento, claveProducto } = result.data
 
-    // Verificar que el producto existe
-    const productoClave = parseInt(form.claveProducto)
+  // Verificar que el departamento existe
+  const existingDepartment = await db.select().from(Department).where(eq(Department.clave, claveDepartamento))
 
-    const producto = await existProduct(productoClave)
+  if (existingDepartment.length === 0) {
+    return redirect('/asignacion-productos/baja?error=true&message=El%20departamento%20no%20existe')
+  }
+  // Verificar que el producto existe
+  const existingProduct = await db.select().from(Product).where(eq(Product.clave, claveProducto))
+  if (existingProduct.length === 0) {
+    return redirect('/asignacion-productos/baja?error=true&message=El%20producto%20no%20existe')
+  }
 
-    if (producto == -1) {
-        return new Response(JSON.stringify({
-            message: `No hay producto con clave proporcionada -> ${productoClave}`
-        }),
-        {
-            status: 400
-        })
-    }
+  // Verificar que el producto esta asignado
+  const asignedProduct = await db
+    .select()
+    .from(ProductDepartment).where(and(eq(ProductDepartment.claveProducto, claveProducto), eq(ProductDepartment.claveDepartamento, claveDepartamento)))
 
-    // Verificar que el producto esta asignado
+  if (asignedProduct.length === 0) {
+    return redirect('/asignacion-productos/baja?error=true&message=El%20producto%20no%20esta%20asignado')
+  }
 
-    const productoIndex = departamentoFile.findIndex(line => line.split("|")[0] == productoClave)
+  // Eliminar producto del departamento
 
-    if (productoIndex === -1) {
-        return new Response(JSON.stringify({
-            message: `El producto con clave ${form.claveProducto} no se encuentra asignado al departamento`
-        }),{
-            status: 400
-        })
-    }
+  await db.delete(ProductDepartment).where(and(eq(ProductDepartment.claveProducto, claveProducto), eq(ProductDepartment.claveDepartamento, claveDepartamento)))
 
-    // Eliminar producto del departamento
-
-    const [productoEliminado] = departamentoFile.splice(productoIndex, 1)
-
-    await writeLinesToFile(departamentoPath, departamentoFile)
-
-    return new Response(JSON.stringify({
-        message: `El producto fue dado de baja del Departamento`
-    }),{
-        status: 200
-    })
+  return redirect('/asignacion-productos/baja?success=true&message=Producto%20desasignado%20exitosamente')
 }

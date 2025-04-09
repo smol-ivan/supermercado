@@ -1,62 +1,46 @@
-import { readLinesFromFile, fileExists, existProduct, writeLinesToFile } from "../utils"
+import { db, eq, and, Product, Department, ProductDepartment } from 'astro:db'
+import { z } from 'astro:content'
 
-export const POST = async ({ request }) => {
-    // Obtener los datos del formulario
-    const formData = await request.formData()
-    const form = {}
+const productPriceSchema = z.object({
+  claveProducto: z.string().min(1, 'La clave del producto es requerida'),
+  claveDepartamento: z.string().min(1, 'La clave del departamento es requerida'),
+  precio: z.coerce.number().min(1, 'El precio es requerido')
+})
 
-    formData.forEach((value, key) => {
-        form[key] = value
-    })
+export const POST = async ({ request, redirect }) => {
+  // Obtenemos los campos del formulario
+  const bodyText = await request.text()
+  const body = Object.fromEntries(new URLSearchParams(bodyText))
 
-    const departamentoPath = `${form.claveDepartamento}ProductosDepto.txt`
+  // Validar los campos del formulario
+  const result = productPriceSchema.safeParse(body)
+  if (!result.success) {
+    return redirect('/precios/asignacion?error=true&message=Campo%20invalido')
+  }
 
-    // Verificar que el departamento existe
-    if (!await fileExists(departamentoPath)) {
-        return new Response(JSON.stringify({
-            message: `No hay departamento con clave proporcionada: ${form.claveDepartamento}`
-        }),
-            { status: 400 }
-        )
-    }
+  const { claveProducto, claveDepartamento, precio } = result.data
+  // Verificar que el departamento existe
+  const existingDepartment = await db.select().from(Department).where(eq(Department.clave, claveDepartamento))
 
-    const departamentoFile = await readLinesFromFile(departamentoPath)
+  if (existingDepartment.length === 0) {
+    return redirect('/precios/asignacion?error=true&message=El%20departamento%20no%20existe')
+  }
 
-    // Verificar que el producto existe
+  // Verificar que el producto exista
+  const existingProduct = await db.select().from(Product).where(eq(Product.clave, claveProducto))
+  if (existingProduct.length === 0) {
+    return redirect('/precios/asignacion?error=true&message=El%20producto%20no%20existe')
+  }
 
-    const productoClave = parseInt(form.claveProducto)
+  // Verificar que el producto esta asignado
+  const asignedProduct = await db
+    .select()
+    .from(ProductDepartment).where(and(eq(ProductDepartment.claveProducto, claveProducto), eq(ProductDepartment.claveDepartamento, claveDepartamento)))
+  if (asignedProduct.length === 0) {
+    return redirect('/precios/asignacion?error=true&message=El%20producto%20no%20esta%20asignado')
+  }
+  // Las condiciones se cumplen, y se cambia el precio del producto
+  await db.update(Product).set({ precio }).where(eq(Product.clave, claveProducto))
 
-    const producto = await existProduct(productoClave)
-
-    if (producto == -1) {
-        return new Response(JSON.stringify({
-            message: `No hay producto con la clave proporcionada: ${productoClave}`
-        }),
-            { status: 400 }
-        )
-    }
-
-    // Verificar que el producto esta asignado
-    const productoIndex = departamentoFile.findIndex(line => line.split("|")[0] == productoClave)
-
-    if (productoIndex === -1) {
-        return new Response(JSON.stringify({
-            message: `El producto con clave ${form.claveProducto} no se encuentra asignado al departamento`
-        }), {
-            status: 400
-        })
-    }
-
-    // Las condiciones se cumplen, y se cambia el precio del producto
-    const productoPrecio = departamentoFile[productoIndex].split('|')
-
-    productoPrecio[1] = `${form.precio}`
-
-    const productoModificado = productoPrecio.join('|')
-
-    departamentoFile[productoIndex] = productoModificado
-
-    writeLinesToFile(departamentoPath, departamentoFile)
-    return new Response(JSON.stringify({ message: `Precio asignado con exito` }), { status: 200 })
+  return redirect('/precios/asignacion?success=true&message=Precio%20cambiado%20correctamente')
 }
-
