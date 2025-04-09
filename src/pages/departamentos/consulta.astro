@@ -2,6 +2,9 @@
 import FormHeader from "../../components/FormHeader.astro";
 import Layout from "../../layouts/Layout.astro";
 import "../../styles/global.css";
+import { db, Department } from "astro:db";
+
+const departments = await db.select().from(Department);
 ---
 
 <Layout>
@@ -17,36 +20,35 @@ import "../../styles/global.css";
                 <th class="rounded-tr-2xl">Responsable</th>
             </tr>
         </thead>
-        <tbody id="departamentosTableBody"> </tbody>
-    </table>
-    <script>
-        async function fetchDeparmantentos() {
-            const response = await fetch("/api/departamentos/consulta");
-            if (!response.ok) {
-                const data = await response.json();
-                alert(data.message);
-                return;
+        <tbody id="departamentosTableBody">
+            {
+                departments.length > 0 ? (
+                    departments.map((producto) => (
+                        <tr>
+                            <td class="cell">{producto.clave}</td>
+                            <td class="cell">{producto.nombre}</td>
+                            <td class="cell">{producto.encargado}</td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr>
+                        <td colspan="3" class="cell">
+                            No hay departamentos registrados
+                        </td>
+                    </tr>
+                )
             }
-            const data = await response.json();
-            const tbody = document.getElementById("departamentosTableBody");
-            tbody.innerHTML = "";
-            data.forEach((departamento) => {
-                const row = document.createElement("tr");
-                const classes = "border text-[1rem] text-center px-3 py-1";
-                row.innerHTML = `
-                    <td class="${classes}">${departamento.clave}</td>
-                    <td class="${classes}">${departamento.nombre}</td>
-                    <td class="${classes}">${departamento.responsable}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        fetchDeparmantentos();
-    </script>
+        </tbody>
+    </table>
 </Layout>
 
 <style>
+    /* TODO: Pasar estilos de tabla a archivo general de estilos */
     @reference "../../styles/global.css";
+    .cell {
+        @apply border text-[1rem] text-center px-3 py-1;
+    }
+
     table {
         @apply w-1/2 table-auto mx-auto;
     }
