@@ -4,6 +4,11 @@ import Layout from "../../layouts/Layout.astro";
 import Campo from "../../components/Campo.astro";
 import Button from "../../components/Botones/TinyBoton.astro";
 import "../../styles/forms.css";
+
+const urlParams = new URL(Astro.request.url).searchParams;
+const error = urlParams.get("error");
+const success = urlParams.get("success");
+const message = urlParams.get("message");
 ---
 
 <Layout>
@@ -11,7 +16,28 @@ import "../../styles/forms.css";
         title="Alta de producto en depto"
         returnHref="/asignacion-productos"
     />
-    <form id="productoForm" class="general-form">
+    <div class={`container ${error === "true" ? "error-active" : ""}`}>
+        {
+            error === "true" && (
+                <div class="error-message">
+                    <p>Error: {message}</p>
+                </div>
+            )
+        }
+        {
+            success === "true" && (
+                <div class="success-message">
+                    <p>Éxito: {message}</p>
+                </div>
+            )
+        }
+    </div>
+    <form
+        id="productoForm"
+        class="general-form"
+        action="/api/asignacion-productos/alta"
+        method="post"
+    >
         <p class="font-bold text-2xl text-center">
             Formulario <br />asignacion de producto
         </p>
@@ -41,26 +67,4 @@ import "../../styles/forms.css";
             <Button label="Limpiar" isReset />
         </div>
     </form>
-
-    <script>
-        document
-            .getElementById("productoForm")
-            .addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                const response = await fetch("/api/asignacion-productos/alta", {
-                    method: "POST",
-                    body: formData,
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    alert(`${data.message}`);
-                    form.reset();
-                } else {
-                    const data = await response.json();
-                    alert(`${data.message}`);
-                }
-            });
-    </script>
 </Layout>

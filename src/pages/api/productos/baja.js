@@ -1,7 +1,7 @@
 import { db, eq, Product, ProductDepartment } from 'astro:db'
 import { z } from 'astro:content'
 
-const productDeleteSchema = z.object({
+export const productDepartmentDeleteSchema = z.object({
   clave: z.coerce.number().min(1, 'La clave es requerida')
 })
 
@@ -9,7 +9,7 @@ export const POST = async ({ request, redirect }) => {
   const bodyText = await request.text()
   const body = Object.fromEntries(new URLSearchParams(bodyText))
 
-  const result = await productDeleteSchema.safeParseAsync(body)
+  const result = await productDepartmentDeleteSchema.safeParseAsync(body)
 
   if (!result.success) {
     const errorMessage = result.error.errors[0]?.message || 'Error de validación'
